@@ -18,15 +18,20 @@ export default class DataBase {
     return data;
   }
 
-  async SignUpUser(email, password) {
+  async SignUpUser(username, email, password) {
     if (password[0] !== password[1]) {
       alert("Lösenorden är inte samma");
       return;
     }
 
-    const { data, error } = await this.supabase.auth.signInWithOtp({
+    const { data, error } = await this.supabase.auth.signUp({
       email: email,
-      password: password,
+      password: password[0],
+      options: {
+        data: {
+          display_name: username,
+        },
+      },
     });
 
     if (error) {
@@ -35,14 +40,14 @@ export default class DataBase {
   }
 
   async SignInUser(email, password) {
-    const { data, error } = await this.supabase.auth.signInWithOtp({
-      email: email.value,
-      password: password.value,
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
     });
     if (error) {
       console.log("swqeawd ", error);
     }
-    console.log(this.supabase.auth.getUser());
+    console.log(this.GetUser());
     console.log(error);
   }
 
@@ -56,7 +61,11 @@ export default class DataBase {
   async GetUser() {
     const {
       data: { user },
+      error,
     } = await this.supabase.auth.getUser();
+    if (error) {
+      console.log("Kunde inte få användare: ", error);
+    }
     return user;
   }
 
@@ -87,6 +96,7 @@ export default class DataBase {
     if (error) {
       console.log("Kunde inte hämta data: ", error);
     }
+    return data;
   }
 
   async UpdateSpesificActiveGame(activeGameId) {
