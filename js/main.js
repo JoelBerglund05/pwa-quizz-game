@@ -1,14 +1,18 @@
-import DataBase from "./DataBase.js";
+import ApiRequests from "./ApiRequests.js";
 import EventManager from "./EventManager.js";
 import GameHandeler from "./GameHandeler.js";
+import Auth from "./Auth.js";
 
 class Main {
   constructor() {
-    this.dataBase = new DataBase();
+    this.dataBase = new ApiRequests();
+    this.authenticattion = new Auth();
     this.eventManager = new EventManager();
     this.gameHandeler = new GameHandeler();
     this.btnDBRequest = document.getElementById("btnDBRequest");
     this.displayData = document.getElementById("dBData");
+
+    this.name = document.getElementById("name");
     this.btnCreateAccount = document.getElementById("createAccount");
     this.email = document.getElementById("email");
     this.password = [
@@ -62,14 +66,14 @@ class Main {
     );
 
     this.eventManager.EventListener(this.btnCreateAccount, clickEvent, () =>
-      this.dataBase.SignUpUser(this.email.value, [
+      this.authenticattion.SignUpUser(this.name.value, this.email.value, [
         this.password[0].value,
         this.password[1].value,
       ]),
     );
 
     this.eventManager.EventListener(this.btnSignIn, clickEvent, () =>
-      this.dataBase.SignInUser(this.email.value, this.password.value),
+      this.authenticattion.SignInUser(this.email.value, this.password[0].value),
     );
 
     this.eventManager.EventListener(this.btnCreateGame, clickEvent, () =>
